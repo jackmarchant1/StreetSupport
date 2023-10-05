@@ -20,7 +20,7 @@ With the accelerating move towards digital transactions, the homeless community 
 
 - **Unique Codes for Homeless Individuals:** Each homeless person receives a short, randomized code, allowing them to garner support without needing a mobile device.
   
-- **Simple Donation Process for Supporters:** Supporters can enter the provided code on our dedicated website, donating through popular payment platforms like Apple Pay, Google Pay, and PayPal.
+- **Simple Donation Process for Supporters:** Supporters can enter the provided code on the dedicated website, donating through popular payment platforms like Apple Pay, Google Pay, and PayPal.
 
 - **Integration with Partnering Charity:** Collaborative effort with a charitable organization that helps distribute unique codes and corresponding debit cards to homeless beneficiaries. These cards offer an avenue for beneficiaries to utilize received funds.
 
@@ -30,7 +30,7 @@ With the accelerating move towards digital transactions, the homeless community 
 
 ## Security & Privacy
 
-Our utmost priority is to ensure the safety, security, and privacy of both donors and recipients. Comprehensive details on the measures in place will be shared here as the platform develops.
+My utmost priority with the project is to ensure the safety, security, and privacy of both donors and recipients. Comprehensive details on the measures in place will be shared here as the platform develops.
 
 ## Ethical Considerations
 
