@@ -18,8 +18,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use('/', router);
-app.use('/ambassador', ambassadorRouter);
+app.use('/api', router);
+app.use('/api/ambassador', ambassadorRouter);
 
 connectDB().then(() => {
     app.listen(port, () => {

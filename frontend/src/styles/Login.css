@@ -1,0 +1,16 @@
+.back-layer{
+    background-color: #6C3EA1;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+}
+
+.login {
+    background-color: #D9D9D9;
+    width: 100%;
+    border-radius: 50px;
+}
+
+.purple-text {
+    color: #6C3EA1;
+}

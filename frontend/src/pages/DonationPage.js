@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/Donation.css';
+import '../styles/Donation.css';
 
 function DonationPage() {
     const handlePaymentButtonClick = (paymentType) => () => {
