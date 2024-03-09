@@ -3,32 +3,33 @@ import '../styles/Login.css';
 import axios from "axios";
 
 function AmbassadorLoginPage() {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = async (event) => {
         event.preventDefault();
-        const credentials = {username, password};
+        //TODO: make it so can choose organisation, not just set ID
+        const organisationId = "65eca2fe501f7ae0f48737dc";
+        const credentials = {email, password, organisationId};
         try {
-            const response = await axios.post('/api/ambassador/login', credentials);
+            const response = await axios.post('/api/ambassador/create', credentials);
             if (response != null) {
-                alert("Logged in with credentials " + response.data.username + response.data.password);
+                alert("Created ambassador " + response.data.email);
             }
         } catch (error) {
             alert("Error logging in: " + error);
         }
-
     };
 
     return (
         <div className="back-layer d-flex justify-content-end">
             <form onSubmit={handleLogin}>
-                <label htmlFor="username">Username:</label>
+                <label htmlFor="email">Email:</label>
                 <input
                     type="text"
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
 
                 <label htmlFor="password">Password:</label>
