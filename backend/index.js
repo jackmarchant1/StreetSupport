@@ -1,6 +1,8 @@
-const express = require('express')
-const cors = require('cors')
-const router = require('./routes/router')
+const express = require('express');
+const cors = require('cors');
+const router = require('./routes/router');
+const ambassadorRouter = require('./routes/ambassador_routes');
+const connectDB = require('./config/DBConnection');
 
 const app = express()
 const port = 8080;
@@ -17,8 +19,14 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use('/', router);
+app.use('/ambassador', ambassadorRouter);
 
-app.listen(port, () => {
-    console.log(`Backend running on http://localhost:${port}`);
+connectDB().then(() => {
+    app.listen(port, () => {
+        console.log(`Backend running on http://localhost:${port}`);
+    });
 });
+
+
+
 
