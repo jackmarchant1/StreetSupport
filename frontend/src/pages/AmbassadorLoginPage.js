@@ -12,14 +12,22 @@ function AmbassadorLoginPage() {
         const organisationId = "65eca2fe501f7ae0f48737dc";
         const credentials = {email, password, organisationId};
         try {
-            const response = await axios.post('/api/ambassador/create', credentials);
+            const response = await axios.post('/api/ambassador/login', credentials, {withCredentials: true});
             if (response != null) {
-                alert("Created ambassador " + response.data.email);
+                alert("Logged in ambassador " + response.data.email);
             }
         } catch (error) {
             alert("Error logging in: " + error);
         }
-    };
+    }
+    const checkAuth = async () => {
+        try {
+            const response = await axios.get('/api/ambassador/isAuthenticated', { withCredentials: true });
+            console.log("success");
+        } catch (error) {
+            console.error("Error checking authentication:", error);
+        }
+    }
 
     return (
         <div className="back-layer d-flex justify-content-end">
@@ -42,6 +50,7 @@ function AmbassadorLoginPage() {
 
                 <button type="submit">Log In</button>
             </form>
+            <button onClick={checkAuth}>Log In</button>
         </div>
     );
 }

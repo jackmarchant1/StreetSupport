@@ -3,6 +3,7 @@ const cors = require('cors');
 const router = require('./routes/router');
 const ambassadorRouter = require('./routes/ambassador_routes');
 const connectDB = require('./config/DBConnection');
+const session = require('express-session');
 
 const app = express()
 const port = 8080;
@@ -17,6 +18,13 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions));
+
+app.use(session({
+    secret: 'secret123908', //TODO: Get better secret key and change secure to true
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, httpOnly: true }
+}));
 
 app.use('/api', router);
 app.use('/api/ambassador', ambassadorRouter);
