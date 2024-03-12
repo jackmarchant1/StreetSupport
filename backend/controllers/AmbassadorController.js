@@ -43,8 +43,7 @@ exports.loginAmbassador = async (req, res) => {
             return res.status(401).send({status: "Unsuccessful", message: "Password is incorrect"})
         }
         //Ambassador is successfully authenticated, TODO: manage sessions
-        req.session.userId = ambassador._id;
-        console.log(req.session);
+        req.session.userDetails = ambassador;
         return res.status(200).send({message: "Log in success"})
     } catch (error) {
         console.error('Error during login:', error);
