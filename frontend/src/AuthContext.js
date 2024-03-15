@@ -8,11 +8,11 @@ export const AuthProvider = ({ children }) => {
     );
 
 
-    // Mock function to change authentication status
+    // Changes authentication state
     const changeAuthState = (state) => {
         setIsAuthenticated(state);
         localStorage.setItem("isAuthenticated", state);
-        console.log("User authenticated");
+        console.log("User changed authentication state");
     };
 
     return (

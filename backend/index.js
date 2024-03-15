@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const router = require('./routes/router');
 const ambassadorRouter = require('./routes/ambassador_routes');
+const memberRouter = require('./routes/member_routes');
 const connectDB = require('./config/DBConnection');
 const session = require('express-session');
 
@@ -28,6 +29,7 @@ app.use(session({
 
 app.use('/api', router);
 app.use('/api/ambassador', ambassadorRouter);
+app.use('/api/member', memberRouter);
 
 connectDB().then(() => {
     app.listen(port, () => {

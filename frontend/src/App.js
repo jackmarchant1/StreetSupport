@@ -22,6 +22,7 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+                    <Route path="/donation" element={<DonationPage/>} />
                     <Route path="*" element={<DonationPage/>} />
                 </Routes>
             </Router>

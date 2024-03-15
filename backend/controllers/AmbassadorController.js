@@ -35,19 +35,19 @@ exports.loginAmbassador = async (req, res) => {
     try {
         const ambassador = await Ambassador.findOne({email});
         if (!ambassador) {
-            return res.status(401).send({status: "Unsuccessful", message: "Ambassador with that email does not exist"});
+            return res.status(401).send({isAuthenticated: false, message: "Ambassador with that email does not exist"});
         }
 
         const isMatch = await bcrypt.compare(password, ambassador.password);
         if (!isMatch) {
-            return res.status(401).send({status: "Unsuccessful", message: "Password is incorrect"})
+            return res.status(401).send({isAuthenticated: false, message: "Password is incorrect"})
         }
         //Ambassador is successfully authenticated, TODO: manage sessions
         req.session.userDetails = ambassador;
-        return res.status(200).send({message: "Log in success"})
+        return res.status(200).send({isAuthenticated: true, message: "Log in success"})
     } catch (error) {
         console.error('Error during login:', error);
-        res.status(500).send({ message: 'Server error during login.' });
+        res.status(500).send({ isAuthenticated: false, message: 'Server error during login.' });
     }
 }
 
@@ -56,15 +56,15 @@ exports.logoutAmbassador = async (req, res) => {
         if (err) {
             return res.status(500).send('Could not log out');
         }
-        res.send('Logged out successfully');
+        res.send({isAuthenticated: true, message: "Log out success"});
     });
 }
 
-exports.checkAuth = (req, res) => { //Middleware to check if auth whenever sensitive info being requested
+exports.checkAuth = (req, res, next) => { //Middleware to check if auth'd whenever sensitive info being requested
     if (!req.session.userId) {
         console.log("User is not authenticated");
         return res.status(401).send('Not authenticated');
     }
-    return res.send({isAuthenticated: true});
+    next();
 }
 
