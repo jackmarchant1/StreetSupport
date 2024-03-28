@@ -7,26 +7,27 @@ export const AuthProvider = ({ children }) => {
         localStorage.getItem("isAuthenticated") === "true"
     );
 
-    const [organisationId, setOrganisationId] = useState(
-        localStorage.getItem("organisationId") || null
+    const storedAmbassador = localStorage.getItem("ambassador");
+    const [ambassador, setAmbassador] = useState(
+        storedAmbassador ? JSON.parse(storedAmbassador) : null
     );
 
-    const login = (orgId) => {
+    const login = (ambassador) => {
         setIsAuthenticated(true);
         localStorage.setItem("isAuthenticated", "true");
-        setOrganisationId(orgId);
-        localStorage.setItem("organisationId", orgId);
+        setAmbassador(ambassador);
+        localStorage.setItem("ambassador", JSON.stringify(ambassador));
     }
 
     const logout = () => {
         setIsAuthenticated(false);
         localStorage.setItem("isAuthenticated", "false");
-        setOrganisationId(null);
-        localStorage.setItem("organisationId", null);
+        setAmbassador(null);
+        localStorage.setItem("ambassador", null);
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, organisationId, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, ambassador, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

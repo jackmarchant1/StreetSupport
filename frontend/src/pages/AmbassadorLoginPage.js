@@ -19,7 +19,7 @@ function AmbassadorLoginPage() {
         try {
             const response = await axios.post('/api/ambassador/login', credentials, {withCredentials: true});
             if (response != null) {
-                login(response.data.ambassadorOrg);
+                login(response.data.ambassador);
                 navigate("/ambassador/dashboard");
             }
         } catch (error) {

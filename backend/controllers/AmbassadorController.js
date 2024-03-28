@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 
 exports.createAmbassador = async (req, res) => {
-    const { email, password, organisationId } = req.body;
+    const { email, password, organisationId, name } = req.body;
     try {
         // First check if the organisation exists
         const organisation = await Organisation.findById(organisationId);
@@ -17,7 +17,8 @@ exports.createAmbassador = async (req, res) => {
         const newAmbassador = new Ambassador({
             email,
             password: passwordHash,
-            organisation: organisationId
+            organisation: organisationId,
+            name: name
         });
         // Save the Ambassador document to the database
         const savedAmbassador = await newAmbassador.save();
@@ -37,14 +38,20 @@ exports.loginAmbassador = async (req, res) => {
         if (!ambassador) {
             return res.status(401).send({isAuthenticated: false, message: "Ambassador with that email does not exist"});
         }
-
         const isMatch = await bcrypt.compare(password, ambassador.password);
         if (!isMatch) {
             return res.status(401).send({isAuthenticated: false, message: "Password is incorrect"})
         }
-        //Ambassador is successfully authenticated, TODO: manage sessions
-        req.session.userDetails = ambassador;
-        return res.status(200).send({isAuthenticated: true, ambassadorOrg: ambassador.organisation, message: "Log in success"})
+        //Check if organisation exists
+        const organisation = await Organisation.findById(ambassador.organisation);
+        if (!organisation) {
+            console.log("Organisation does not exist with id: " + ambassador.organisation);
+            return res.status(401).send({isAuthenticated: false, message: "Organisation does not exist"})
+        }
+        const returnAmbassador = { ...ambassador._doc };
+        delete returnAmbassador.password;
+        returnAmbassador.organisation = organisation;
+        return res.status(200).send({isAuthenticated: true, ambassador: returnAmbassador, message: "Log in success"})
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).send({ isAuthenticated: false, message: 'Server error during login.' });
