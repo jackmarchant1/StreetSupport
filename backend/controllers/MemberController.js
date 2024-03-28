@@ -27,3 +27,15 @@ exports.createMember = async (req, res) => {
         res.status(500).send({ message: 'Error creating new member' });
     }
 };
+
+exports.getMembersFromOrg = async (req, res) => {
+    console.log("Getting members");
+    const { organisationId } = req.query;
+    try {
+        const members = await Member.find({ organisation: organisationId });
+        res.json(members);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+}

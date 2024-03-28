@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import '../styles/Login.css';
 import axios from "axios";
 import { useAuth } from '../AuthContext';
-import { useNavigate } from 'react-router-dom';
+import {Navigate, useNavigate} from 'react-router-dom';
 
 function AmbassadorLoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const {changeAuthState} = useAuth();
+    const {isAuthenticated, login, logout} = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (event) => {
@@ -19,19 +19,21 @@ function AmbassadorLoginPage() {
         try {
             const response = await axios.post('/api/ambassador/login', credentials, {withCredentials: true});
             if (response != null) {
-                console.log("Logged in ambassador")
-                changeAuthState(true);
+                login(response.data.ambassadorOrg);
                 navigate("/ambassador/dashboard");
             }
         } catch (error) {
             alert("Error logging in: " + error);
-            changeAuthState(false)
         }
     };
 
+    if (isAuthenticated) {
+        return <Navigate to="/ambassador/dashboard" replace />;
+    }
+
     return (
         <div className="back-layer d-flex justify-content-center align-items-center">
-            <div className="form-container p-5">
+            <div className="form-container d-flex justify-content-center p-5">
                 <form onSubmit={handleLogin}>
                     <div className="mb-4">
                         <input type="email"
@@ -55,7 +57,7 @@ function AmbassadorLoginPage() {
                         <div className="col d-flex justify-content-center">
                             <div className="form-check">
                                 <input className="form-check-input" type="checkbox" value="" id="rememberCheck"
-                                       checked/>
+                                       defaultChecked/>
                                 <label className="form-check-label" htmlFor="rememberCheck"> Remember me </label>
                             </div>
                         </div>
