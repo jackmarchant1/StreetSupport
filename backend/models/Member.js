@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const memberSchema = new mongoose.Schema({
-    name: {type: String, required: true},
+    first_name: {type: String, required: true},
+    last_name: {type: String, required: true},
     member_since: {type: Date, required: true},
     organisation: {type: Schema.Types.ObjectId, ref: 'Organisation', required: true}
 });
