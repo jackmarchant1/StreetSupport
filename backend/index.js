@@ -5,6 +5,7 @@ const ambassadorRouter = require('./routes/ambassador_routes');
 const memberRouter = require('./routes/member_routes');
 const connectDB = require('./config/DBConnection');
 const session = require('express-session');
+const request = require('supertest');
 
 const app = express()
 const port = 8080;
@@ -31,15 +32,17 @@ app.use('/api', router);
 app.use('/api/ambassador', ambassadorRouter);
 app.use('/api/member', memberRouter);
 
-beforeAll(async () => {
-    await connectDB();
-    console.log("Connection successful");
-});
 
-const server = app.listen(port, () => {
-    console.log(`Backend running on http://localhost:${port}`);
-});
-module.exports = server;
+
+if (process.env.NODE_ENV !== 'test') {
+    connectDB().then(() => {
+        app.listen(port, () => {
+            console.log(`Backend running on http://localhost:${port}`);
+        });
+    })
+}
+
+module.exports = app;
 
 
 

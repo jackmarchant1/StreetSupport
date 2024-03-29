@@ -66,6 +66,84 @@ describe('AmbassadorController', () => {
             expect(Ambassador().save).toHaveBeenCalled();
             expect(res.body).toEqual(mockSavedAmbassador);
         });
+
+        it('should fail if organisation is not valid', async () => {
+            // Mock request body
+            const reqBody = {
+                email: 'test@example.com',
+                password: 'password123',
+                organisationId: 'non-existent-orgId',
+                name: 'Test Ambassador'
+            };
+
+            // When organisation does not exist
+            Organisation.findById.mockResolvedValue(null);
+
+            // Send request
+            const res = await request(app)
+                .post('/api/ambassador/create')
+                .send(reqBody)
+                .expect(401);
+
+            // Assertions
+            expect(Organisation.findById).toHaveBeenCalledWith('non-existent-orgId');
+            expect(res.body).toEqual({ message: 'Organisation not found' });
+        });
+
+        it('should fail if required field are not present', async () => {
+            // Mock request body
+            const reqBody = {
+                //Omitted required email field
+                password: 'password123',
+                organisationId: 'orgId',
+                name: 'Test Ambassador'
+            };
+
+            Organisation.findById.mockResolvedValue({
+                _id: {
+                    $oid: "orgId"
+                },
+                member_since: {
+                    $date: "2024-01-01T00:00:00.000Z"
+                },
+                name: "test",
+                website: "test.come"
+            });
+
+            // Mock bcrypt functions
+            bcrypt.genSalt = jest.fn().mockResolvedValue('fake-salt');
+            bcrypt.hash = jest.fn().mockResolvedValue('fake-hash');
+
+            // Mock Ambassador model and save function
+            const mockSavedAmbassador = {
+                _id: 'fake-ambassador-id',
+                ...reqBody,
+                organisation: 'orgId',
+            };
+            // console
+
+            Ambassador.mockReturnValue({
+                save: jest.fn().mockRejectedValue(new Error('Validation failed: Email is required')) //this should just throw error
+            });
+            // Send request
+            const res = await request(app)
+                .post('/api/ambassador/create')
+                .send(reqBody)
+                .expect(500);
+
+            // Assertions
+            expect(Organisation.findById).toHaveBeenCalledWith('orgId');
+            expect(bcrypt.genSalt).toHaveBeenCalledWith(10);
+            expect(bcrypt.hash).toHaveBeenCalledWith('password123', 'fake-salt');
+            expect(Ambassador).toHaveBeenCalledWith({
+                password: 'fake-hash',
+                organisation: 'orgId',
+                name: 'Test Ambassador'
+            });
+            expect(Ambassador().save).toHaveBeenCalled();
+            expect(res.body).toEqual({message: "Error creating new ambassador"});
+        });
+
     });
 
     describe('loginAmbassador', () => {

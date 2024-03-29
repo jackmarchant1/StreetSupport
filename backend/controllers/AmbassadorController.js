@@ -25,7 +25,6 @@ exports.createAmbassador = async (req, res) => {
         // Send response with new ambassador
         res.status(201).json(savedAmbassador);
     } catch (error) {
-        console.error('Error creating ambassador: ', error);
         res.status(500).send({ message: 'Error creating new ambassador' });
     }
 };
