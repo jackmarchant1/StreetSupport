@@ -6,7 +6,7 @@ let connection;
 mongoose.Promise = global.Promise;
 
 const connectDB = async () => {
-    mongoose.connect(mongoDB).then(result => {
+    await mongoose.connect(mongoDB).then(result => {
         connection = result.connection;
         console.log("Connection successful")
     }).catch(err => {

@@ -32,7 +32,6 @@ exports.createAmbassador = async (req, res) => {
 
 exports.loginAmbassador = async (req, res) => {
     const { email, password } = req.body;
-    console.log()
     try {
         const ambassador = await Ambassador.findOne({email});
         if (!ambassador) {

@@ -31,11 +31,15 @@ app.use('/api', router);
 app.use('/api/ambassador', ambassadorRouter);
 app.use('/api/member', memberRouter);
 
-connectDB().then(() => {
-    app.listen(port, () => {
-        console.log(`Backend running on http://localhost:${port}`);
-    });
+beforeAll(async () => {
+    await connectDB();
+    console.log("Connection successful");
 });
+
+const server = app.listen(port, () => {
+    console.log(`Backend running on http://localhost:${port}`);
+});
+module.exports = server;
 
 
 
