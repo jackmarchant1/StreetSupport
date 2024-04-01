@@ -43,7 +43,6 @@ exports.loginAmbassador = async (req, res) => {
         //Check if organisation exists
         const organisation = await Organisation.findById(ambassador.organisation);
         if (!organisation) {
-            console.log("Organisation does not exist with id: " + ambassador.organisation);
             return res.status(401).send({isAuthenticated: false, message: "Organisation does not exist"})
         }
         const returnAmbassador = { ...ambassador._doc };

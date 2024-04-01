@@ -115,13 +115,6 @@ describe('AmbassadorController', () => {
             bcrypt.hash = jest.fn().mockResolvedValue('fake-hash');
 
             // Mock Ambassador model and save function
-            const mockSavedAmbassador = {
-                _id: 'fake-ambassador-id',
-                ...reqBody,
-                organisation: 'orgId',
-            };
-            // console
-
             Ambassador.mockReturnValue({
                 save: jest.fn().mockRejectedValue(new Error('Validation failed: Email is required')) //this should just throw error
             });
@@ -147,7 +140,160 @@ describe('AmbassadorController', () => {
     });
 
     describe('loginAmbassador', () => {
-        // TODO: Write tests for loginAmbassador function
+        it('should login ambassador when credentials are valid', async () => {
+            const reqBody = {
+                email: 'test@example.com',
+                password: 'password123',
+            }
+
+            const returnAmbassador = {
+                _id: 'fake-ambassador-id',
+                email: 'test@example.com',
+                password: 'encryptedPassword',
+                name: 'name',
+                organisation: 'orgId',
+                _doc: { //this is because of how the copying works in the function
+                    _id: 'fake-ambassador-id',
+                    ...reqBody,
+                    name: 'name',
+                    organisation: 'orgId',
+                }
+            }
+
+            const ambassadorOrg = {
+                _id: {
+                    $oid: "orgId"
+                },
+                member_since: {
+                    $date: "2024-01-01T00:00:00.000Z"
+                },
+                name: "test",
+                website: "test.come"
+            }
+
+            const expectedAmbassador = {
+                _id: 'fake-ambassador-id',
+                email: 'test@example.com', //removes password
+                name: 'name',
+                organisation: ambassadorOrg,
+            };
+
+            //Mock setup
+            Ambassador.findOne.mockResolvedValue(returnAmbassador);
+
+            bcrypt.compare = jest.fn().mockResolvedValue(true);
+
+            Organisation.findById.mockResolvedValue(ambassadorOrg);
+
+            // Send request
+            const res = await request(app)
+                .post('/api/ambassador/login')
+                .send(reqBody)
+                .expect(200);
+
+            // Assertions
+            expect(Ambassador.findOne).toHaveBeenCalledWith({email: 'test@example.com'});
+            expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'encryptedPassword');
+            expect(Organisation.findById).toHaveBeenCalledWith('orgId');
+            expect(res.body).toEqual({isAuthenticated: true, ambassador: expectedAmbassador, message: "Log in success"});
+        });
+
+        it('should throw error when password does not match', async () => {
+            const reqBody = {
+                email: 'test@example.com',
+                password: 'password123',
+            }
+
+            const returnAmbassador = {
+                _id: 'fake-ambassador-id',
+                email: 'test@example.com',
+                password: 'encryptedPassword',
+                name: 'name',
+                organisation: 'orgId',
+                _doc: { //this is because of how the copying works in the function
+                    _id: 'fake-ambassador-id',
+                    email: 'test@example.com',
+                    password: 'encryptedPassword',
+                    name: 'name',
+                    organisation: 'orgId',
+                }
+            }
+
+            //Mock setup
+            Ambassador.findOne.mockResolvedValue(returnAmbassador);
+
+            bcrypt.compare = jest.fn().mockResolvedValue(false); //passwords dont match
+
+            // Send request
+            const res = await request(app)
+                .post('/api/ambassador/login')
+                .send(reqBody)
+                .expect(401);
+
+            // Assertions
+            expect(Ambassador.findOne).toHaveBeenCalledWith({email: 'test@example.com'});
+            expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'encryptedPassword');
+            expect(res.body).toEqual({isAuthenticated: false, message: "Password is incorrect"});
+        });
+
+        it('should throw error when ambassador does not exist', async () => {
+            const reqBody = {
+                email: 'test@example.com',
+                password: 'password123',
+            }
+
+            //Mock setup
+            Ambassador.findOne.mockResolvedValue(null);
+
+            // Send request
+            const res = await request(app)
+                .post('/api/ambassador/login')
+                .send(reqBody)
+                .expect(401);
+
+            // Assertions
+            expect(Ambassador.findOne).toHaveBeenCalledWith({email: 'test@example.com'});
+            expect(res.body).toEqual({isAuthenticated: false, message: "Ambassador with that email does not exist"});
+        });
+
+        it('should throw error when organisation does not exist', async () => {
+            const reqBody = {
+                email: 'test@example.com',
+                password: 'password123',
+            }
+
+            const returnAmbassador = {
+                _id: 'fake-ambassador-id',
+                email: 'test@example.com',
+                password: 'encryptedPassword',
+                name: 'name',
+                organisation: 'orgId',
+                _doc: { //this is because of how the copying works in the function
+                    _id: 'fake-ambassador-id',
+                    email: 'test@example.com',
+                    password: 'encryptedPassword',
+                    name: 'name',
+                    organisation: 'orgId',
+                }
+            }
+
+            //Mock setup
+            Ambassador.findOne.mockResolvedValue(returnAmbassador);
+            bcrypt.compare = jest.fn().mockResolvedValue(true);
+            Organisation.findById.mockResolvedValue(null);
+
+            // Send request
+            const res = await request(app)
+                .post('/api/ambassador/login')
+                .send(reqBody)
+                .expect(401);
+
+            // Assertions
+            expect(Ambassador.findOne).toHaveBeenCalledWith({email: 'test@example.com'});
+            expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'encryptedPassword');
+            expect(Organisation.findById).toHaveBeenCalledWith('orgId');
+            expect(res.body).toEqual({isAuthenticated: false, message: "Organisation does not exist"});
+        });
     });
 
     describe('logoutAmbassador', () => {
