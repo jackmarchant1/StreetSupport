@@ -4,6 +4,8 @@ const ambassadorController = require('../controllers/AmbassadorController');
 
 router.post('/login', ambassadorController.loginAmbassador);
 
+router.post('/logout', ambassadorController.logoutAmbassador);
+
 router.post('/create', ambassadorController.createAmbassador);
 
 router.get('/isAuthenticated', ambassadorController.checkAuth);

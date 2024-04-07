@@ -22,7 +22,7 @@ exports.createAmbassador = async (req, res) => {
         });
         // Save the Ambassador document to the database
         const savedAmbassador = await newAmbassador.save();
-        // Send response with new ambassador
+        req.session.userId = savedAmbassador._id;
         res.status(201).json(savedAmbassador);
     } catch (error) {
         res.status(500).send({ message: 'Error creating new ambassador' });
@@ -48,6 +48,7 @@ exports.loginAmbassador = async (req, res) => {
         const returnAmbassador = { ...ambassador._doc };
         delete returnAmbassador.password;
         returnAmbassador.organisation = organisation;
+        req.session.userId = returnAmbassador._id;
         return res.status(200).send({isAuthenticated: true, ambassador: returnAmbassador, message: "Log in success"})
     } catch (error) {
         console.error('Error during login:', error);
@@ -58,15 +59,14 @@ exports.loginAmbassador = async (req, res) => {
 exports.logoutAmbassador = async (req, res) => {
     req.session.destroy(err => {
         if (err) {
-            return res.status(500).send('Could not log out');
+            return res.status(500).send({isAuthenticated: false, message: "Error logging out"});
         }
-        res.send({isAuthenticated: true, message: "Log out success"});
+        res.status(200).send({isAuthenticated: false, message: "Log out success"});
     });
 }
 
 exports.checkAuth = (req, res, next) => { //Middleware to check if auth'd whenever sensitive info being requested
     if (!req.session.userId) {
-        console.log("User is not authenticated");
         return res.status(401).send('Not authenticated');
     }
     next();

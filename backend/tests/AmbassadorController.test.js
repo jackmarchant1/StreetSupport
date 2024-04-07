@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const app = require('../index');
 const Ambassador = require('../models/Ambassador');
 const Organisation = require('../models/Organisation');
+const ambassadorController = require('../controllers/AmbassadorController')
 
 //Mock both models that are used, so whenever calls are made to these we are actually calling the mocks
 jest.mock('../models/Ambassador');
@@ -14,7 +15,7 @@ describe('AmbassadorController', () => {
     });
 
     describe('createAmbassador', () => {
-        it('should create a new ambassador', async () => {
+        it('should create a new ambassador if credentials are valid', async () => {
             // Mock request body
             const reqBody = {
                 email: 'test@example.com',
@@ -46,13 +47,11 @@ describe('AmbassadorController', () => {
                 organisation: 'orgId',
             };
             Ambassador.mockReturnValue({ save: jest.fn().mockResolvedValue(mockSavedAmbassador) });//when save is called
-
             // Send request
             const res = await request(app)
                 .post('/api/ambassador/create')
                 .send(reqBody)
                 .expect(201);
-
             // Assertions
             expect(Organisation.findById).toHaveBeenCalledWith('orgId');
             expect(bcrypt.genSalt).toHaveBeenCalledWith(10);
@@ -297,10 +296,40 @@ describe('AmbassadorController', () => {
     });
 
     describe('logoutAmbassador', () => {
-        // TODO: Write tests for logoutAmbassador function
+        it('should successfully log out the user', async () => {
+            const response = await request(app)
+                .post('/api/ambassador/logout')
+                .expect(200);
+
+            expect(response.body).toEqual({
+                isAuthenticated: false,
+                message: "Log out success"
+            });
+        });
     });
 
     describe('checkAuth', () => {
-        // TODO: Write tests for checkAuth middleware
+        it('should call next() if user is authenticated', () => {
+            const req  = {session: {
+                    userId: 'fake-ambassador-id',
+                }};
+            const next = jest.fn();
+            const res = {};
+            ambassadorController.checkAuth(req, res, next);
+            expect(next).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call return 401 if user is not authenticated', () => {
+            const req  = {session: {}};
+            const next = jest.fn();
+            const res = {
+                status: jest.fn().mockReturnThis(),
+                send: jest.fn()
+            };
+            ambassadorController.checkAuth(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(401);
+            expect(next).not.toHaveBeenCalled();
+        });
+
     });
 });
