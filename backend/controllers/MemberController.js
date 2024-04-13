@@ -1,7 +1,5 @@
-const Ambassador = require('../models/Ambassador');
 const Member = require('../models/Member');
 const Organisation = require('../models/Organisation');
-const bcrypt = require('bcrypt');
 
 
 exports.createMember = async (req, res) => {

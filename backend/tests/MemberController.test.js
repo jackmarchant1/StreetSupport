@@ -1,15 +1,12 @@
 const request = require('supertest');
-const bcrypt = require('bcrypt');
 const app = require('../index');
-const Ambassador = require('../models/Ambassador');
 const Organisation = require('../models/Organisation');
-const Member = require('../models/Member')
-const ambassadorController = require('../controllers/AmbassadorController')
+const Member = require('../models/Member');
 
 //Mock both models that are used, so whenever calls are made to these we are actually calling the mocks
 jest.mock('../models/Ambassador');
 jest.mock('../models/Organisation');
-jest.mock('../models/Member')
+jest.mock('../models/Member');
 
 describe('MemberController', () => {
     afterEach(() => {

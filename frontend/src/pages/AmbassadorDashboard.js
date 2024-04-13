@@ -5,7 +5,7 @@ import Navbar from "../partials/Navbar";
 
 
 function AmbassadorDashboard() {
-    const {ambassador, logout} = useAuth();
+    const {ambassador} = useAuth();
     const [members, setMembers] = useState([]);
 
     useEffect(() => {
