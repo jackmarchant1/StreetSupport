@@ -5,18 +5,18 @@ const bcrypt = require('bcrypt');
 
 
 exports.createMember = async (req, res) => {
-    const { name, member_since, organisationId } = req.body;
+    const { first_name, last_name, member_since, orgId } = req.body;
     try {
         // First check if the organisation exists
-        console.log(organisationId);
-        const organisation = await Organisation.findById(organisationId);
+        const organisation = await Organisation.findById(orgId);
         if (!organisation) {
             return res.status(401).send({ message: 'Organisation not found' });
         }
         const newMember = new Member({
-            name,
+            first_name,
+            last_name,
             member_since,
-            organisation: organisationId
+            organisation: orgId
         });
         // Save the Member document to the database
         const savedMember = await newMember.save();
@@ -29,13 +29,11 @@ exports.createMember = async (req, res) => {
 };
 
 exports.getMembersFromOrg = async (req, res) => {
-    console.log("Getting members");
-    const { organisationId } = req.query;
+    const { orgId } = req.query;
     try {
-        const members = await Member.find({ organisation: organisationId });
+        const members = await Member.find({ organisation: orgId });
         res.json(members);
     } catch (err) {
-        console.error(err.message);
         res.status(500).send('Server Error');
     }
 }

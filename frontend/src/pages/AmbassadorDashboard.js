@@ -14,7 +14,7 @@ function AmbassadorDashboard() {
             try {
                 const response = await axios.get('/api/member/getMembersFromOrg', {
                     params: {
-                        organisationId: ambassador.organisation,
+                        orgId: ambassador.organisation,
                     }
                 });
                 setMembers(response.data);
