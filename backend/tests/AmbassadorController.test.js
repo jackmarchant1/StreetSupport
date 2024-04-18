@@ -3,11 +3,13 @@ const bcrypt = require('bcrypt');
 const app = require('../index');
 const Ambassador = require('../models/Ambassador');
 const Organisation = require('../models/Organisation');
+const Member = require('../models/Member')
 const ambassadorController = require('../controllers/AmbassadorController')
 
 //Mock both models that are used, so whenever calls are made to these we are actually calling the mocks
 jest.mock('../models/Ambassador');
 jest.mock('../models/Organisation');
+jest.mock('../models/Member')
 
 describe('AmbassadorController', () => {
     afterEach(() => {
@@ -305,6 +307,75 @@ describe('AmbassadorController', () => {
                 isAuthenticated: false,
                 message: "Log out success"
             });
+        });
+    });
+
+    describe('suspendMember', () => {
+
+        it('should suspend a given member successfully', async () => {
+            const mockSuspendedMember = { _id: 'mockedMemberId', is_suspended: true }
+            Member.suspendMember.mockResolvedValueOnce(mockSuspendedMember);
+
+            const mockRequestBody = {
+                memberId: 'mockedMemberId',
+            };
+
+            const res = await request(app)
+                .post('/api/ambassador/suspendMember')
+                .send(mockRequestBody)
+                .expect(200);
+
+            expect(Member.suspendMember).toHaveBeenCalledWith('mockedMemberId');
+            expect(res.body).toEqual({message:'Member suspended successfully', suspendedMember: mockSuspendedMember});
+        });
+
+        it('should handle errors when suspending a member', async () => {
+
+            Member.suspendMember.mockRejectedValueOnce(new Error('Mocked error'));
+
+            const mockRequestBody = {
+                memberId: 'mockedMemberId',
+            };
+
+            const res = await request(app)
+                .post('/api/ambassador/suspendMember')
+                .send(mockRequestBody)
+                .expect(500);
+
+            expect(res.body).toEqual({error: 'Internal server error'});
+            expect(Member.suspendMember).toHaveBeenCalledWith('mockedMemberId');
+        });
+    });
+
+
+    describe('deleteMember', () => {
+        it('should delete a given member successfully', async () => {
+            const mockDeletedMember = { _id: 'mockedMemberId' }
+            Member.deleteMember.mockResolvedValue(mockDeletedMember);
+            const mockRequestBody = {
+                memberId: 'mockedMemberId',
+            };
+
+            const res = await request(app)
+                .post('/api/ambassador/deleteMember')
+                .send(mockRequestBody)
+                .expect(200)
+
+            expect(res.body).toEqual({message: 'Member deleted successfully', deletedMember: mockDeletedMember});
+        });
+
+        it('should handle errors when deleting a member', async() => {
+            Member.deleteMember.mockRejectedValueOnce(new Error('Mocked error'));
+            const mockRequestBody = {
+                memberId: 'mockedMemberId',
+            };
+
+            const res = await request(app)
+                .post('/api/ambassador/deleteMember')
+                .send(mockRequestBody)
+                .expect(500)
+
+            expect(res.body).toEqual({error: 'Internal server error'});
         });
     });
 

@@ -1,5 +1,8 @@
 const Member = require('../models/Member');
 const Organisation = require('../models/Organisation');
+const mongoose = require('mongoose');
+const { faker } = require('@faker-js/faker');
+const connectDB = require('../config/DBConnection');
 
 
 exports.createMember = async (req, res) => {
@@ -34,4 +37,39 @@ exports.getMembersFromOrg = async (req, res) => {
     } catch (err) {
         res.status(500).send('Server Error');
     }
-}
+};
+
+exports.generateRandomMembers = async (amount) => {
+    try {
+        await connectDB();
+
+        const members = [];
+        const organisation = await Organisation.findById('65eca2fe501f7ae0f48737dc');
+
+        if (!organisation) {
+            console.error('No organisation found in the database');
+            return;
+        }
+
+        for (let i = 0; i < amount; i++) {
+            const firstName = faker.person.firstName();
+            const lastName = faker.person.lastName();
+            const memberSince = faker.date.past(); // Random past date
+
+            const member = new Member({
+                first_name: firstName,
+                last_name: lastName,
+                member_since: memberSince,
+                organisation: organisation._id
+            });
+
+            members.push(member);
+        }
+
+        // Insert all generated members into the database
+        await Member.insertMany(members);
+        console.log(amount + ' random members inserted successfully');
+    } catch (error) {
+        console.error('Error generating random members:', error);
+    }
+};

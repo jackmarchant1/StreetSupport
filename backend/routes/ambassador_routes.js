@@ -6,6 +6,10 @@ router.post('/login', ambassadorController.loginAmbassador);
 
 router.post('/logout', ambassadorController.logoutAmbassador);
 
+router.post('/suspendMember', ambassadorController.suspendMember);
+
+router.post('/deleteMember', ambassadorController.deleteMember);
+
 router.post('/create', ambassadorController.createAmbassador);
 
 router.get('/isAuthenticated', ambassadorController.checkAuth);

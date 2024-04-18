@@ -1,5 +1,6 @@
 const Ambassador = require('../models/Ambassador');
 const Organisation = require('../models/Organisation');
+const Member = require('../models/Member');
 const bcrypt = require('bcrypt');
 
 
@@ -64,6 +65,30 @@ exports.logoutAmbassador = async (req, res) => {
         res.status(200).send({isAuthenticated: false, message: "Log out success"});
     });
 }
+
+exports.suspendMember = async (req, res) => {
+    const { memberId } = req.body;
+
+    try {
+        const suspendedMember = await Member.suspendMember(memberId);
+        res.status(200).send({ message: 'Member suspended successfully', suspendedMember });
+    } catch (error) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
+exports.deleteMember = async(req, res) => {
+    const {memberId} = req.body;
+
+    try {
+        console.log('attempting to delete member with id ' + memberId);
+        const deletedMember = await Member.deleteMember(memberId);
+        res.status(200).send({message: 'Member deleted successfully', deletedMember});
+    } catch (error) {
+        res.status(500).send({error: 'Internal server error'});
+    }
+}
+
 
 exports.checkAuth = (req, res, next) => { //Middleware to check if auth'd whenever sensitive info being requested
     if (!req.session.userId) {

@@ -2,15 +2,17 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import {useAuth} from '../AuthContext';
 import Navbar from "../partials/Navbar";
+import '../styles/Dashboard.css'
+import MemberView from "./MemberView";
 
 
 function AmbassadorDashboard() {
     const {ambassador} = useAuth();
     const [members, setMembers] = useState([]);
+    const [selectedMember, setSelectedMember] = useState(false);
 
     useEffect(() => {
         const fetchMembers = async () => {
-            console.log("ambassador object on load: ", JSON.stringify(ambassador));
             try {
                 const response = await axios.get('/api/member/getMembersFromOrg', {
                     params: {
@@ -31,6 +33,17 @@ function AmbassadorDashboard() {
 
     }, [ambassador]);
 
+    const removeDeletedMember = (deletedMemberId) => {
+        setMembers(members.filter(member => member._id !== deletedMemberId));
+    };
+
+    const handleRowClick = (member) => {
+        setSelectedMember(member);
+    };
+    const closeModal = () => {
+        setSelectedMember(null);
+    };
+
     function formatDate(dateString) {
         const date = new Date(dateString);
         const day = date.getDate();
@@ -43,30 +56,36 @@ function AmbassadorDashboard() {
     return (
         <>
             <Navbar/>
-            <div className="container">
+            <div className="d-flex p-3">
                 <h1>Dashboard</h1>
-                <table className="table">
-                    <thead className="thead-dark">
-                    <tr>
-                        <th scope="col">Member id</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Member Since</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {members.map(member => (
-                        <tr key={member._id}>
-                            <th scope="row">{member._id}</th>
-                            <td>{member.first_name}</td>
-                            <td>{member.last_name}</td>
-                            <td>{formatDate(member.member_since)}</td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-
             </div>
+            <div className="container d-flex flex-column align-items-start">
+                <h3>Members</h3>
+                <div className="table-responsive member-table">
+                    <table className="table table-striped table-hover">
+                        <thead className="thead-dark">
+                        <tr>
+                            <th scope="col">Member id</th>
+                            <th scope="col">First</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">Member Since</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {members.map(member => (
+                            <tr key={member._id} onClick={() => handleRowClick(member)}>
+                                <th scope="row">{member._id}</th>
+                                <td>{member.first_name}</td>
+                                <td>{member.last_name}</td>
+                                <td>{formatDate(member.member_since)}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {/* Member detail modal */}
+            {selectedMember && <MemberView member={selectedMember} onClose={closeModal} removeDeletedMember={removeDeletedMember}/>}
         </>
 
     );
