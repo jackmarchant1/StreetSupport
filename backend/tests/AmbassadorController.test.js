@@ -295,6 +295,26 @@ describe('AmbassadorController', () => {
             expect(Organisation.findById).toHaveBeenCalledWith('orgId');
             expect(res.body).toEqual({isAuthenticated: false, message: "Organisation does not exist"});
         });
+
+        it('should throw error when there has been a server error', async () => {
+            const reqBody = {
+                email: 'test@example.com',
+                password: 'password123',
+            }
+
+            //Mock setup
+            Ambassador.findOne.mockRejectedValue(new Error("Server error"));
+
+            // Send request
+            const res = await request(app)
+                .post('/api/ambassador/login')
+                .send(reqBody)
+                .expect(500);
+
+            // Assertions
+            expect(Ambassador.findOne).toHaveBeenCalledWith({email: 'test@example.com'});
+            expect(res.body).toEqual({ isAuthenticated: false, message: 'Server error during login.' });
+        });
     });
 
     describe('logoutAmbassador', () => {
@@ -401,6 +421,5 @@ describe('AmbassadorController', () => {
             expect(res.status).toHaveBeenCalledWith(401);
             expect(next).not.toHaveBeenCalled();
         });
-
     });
 });

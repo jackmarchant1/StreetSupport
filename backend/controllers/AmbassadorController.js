@@ -52,7 +52,6 @@ exports.loginAmbassador = async (req, res) => {
         req.session.userId = returnAmbassador._id;
         return res.status(200).send({isAuthenticated: true, ambassador: returnAmbassador, message: "Log in success"})
     } catch (error) {
-        console.error('Error during login:', error);
         res.status(500).send({ isAuthenticated: false, message: 'Server error during login.' });
     }
 }

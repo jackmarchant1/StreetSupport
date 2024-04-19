@@ -83,6 +83,24 @@ describe('MemberController', () => {
             expect(Organisation.findById).toHaveBeenCalledWith('nonexistent-orgId');
             expect(res.body).toEqual({ message: 'Organisation not found' });
         });
+
+        it('should throw errors if server errors', async () => {
+            const reqBody = {
+                first_name: 'test fn',
+                last_name: 'test ln',
+                orgId: 'nonexistent-orgId',
+                member_since: {
+                    $date: "2024-01-01T00:00:00.000Z"
+                }
+            };
+
+            Organisation.findById.mockRejectedValue(new Error('Server error'));
+
+            const res = await request(app)
+                .post('/api/member/create')
+                .send(reqBody)
+                .expect(500)
+        })
     });
 
     describe('getMembersFromOrg', () => {
@@ -115,6 +133,5 @@ describe('MemberController', () => {
             // Assertion
             expect(response.text).toBe('Server Error');
         });
-
     });
 });
