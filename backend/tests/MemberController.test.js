@@ -96,7 +96,7 @@ describe('MemberController', () => {
 
             Organisation.findById.mockRejectedValue(new Error('Server error'));
 
-            const res = await request(app)
+            await request(app)
                 .post('/api/member/create')
                 .send(reqBody)
                 .expect(500)

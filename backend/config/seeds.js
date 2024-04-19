@@ -1,5 +1,4 @@
 const { generateRandomMembers } = require('../controllers/MemberController');
-const mongoose = require('mongoose');
 
 
 const amount = parseInt(process.argv[2]) || 1;

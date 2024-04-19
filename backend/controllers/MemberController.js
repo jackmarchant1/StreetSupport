@@ -1,6 +1,5 @@
 const Member = require('../models/Member');
 const Organisation = require('../models/Organisation');
-const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
 const connectDB = require('../config/DBConnection');
 

@@ -11,7 +11,7 @@ function MemberView({ member, onClose, removeDeletedMember}) {
     }
     const deleteMember = (memberId) => async () => {
         try {
-            const res = await axios.post('/api/ambassador/deleteMember', {
+            await axios.post('/api/ambassador/deleteMember', {
                     memberId: memberId
                 }
             );
