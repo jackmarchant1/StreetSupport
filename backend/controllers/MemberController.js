@@ -30,7 +30,17 @@ exports.createMember = async (req, res) => {
 exports.getMembersFromOrg = async (req, res) => {
     const { orgId } = req.query;
     try {
-        const members = await Member.find({ organisation: orgId });
+        const members = await Member.find({ organisation: orgId, is_suspended: false });
+        res.json(members);
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.getSuspendedMembersFromOrg = async (req, res) => {
+    const { orgId } = req.query;
+    try {
+        const members = await Member.find({ organisation: orgId, is_suspended: true });
         res.json(members);
     } catch (err) {
         res.status(500).send('Server Error');

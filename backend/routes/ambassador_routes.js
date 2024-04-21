@@ -8,6 +8,8 @@ router.post('/logout', ambassadorController.logoutAmbassador);
 
 router.post('/suspendMember', ambassadorController.suspendMember);
 
+router.post('/unsuspendMember', ambassadorController.unsuspendMember);
+
 router.post('/deleteMember', ambassadorController.deleteMember);
 
 router.post('/create', ambassadorController.createAmbassador);

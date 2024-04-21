@@ -10,25 +10,38 @@ function AmbassadorDashboard() {
     const {ambassador} = useAuth();
     const [members, setMembers] = useState([]);
     const [selectedMember, setSelectedMember] = useState(false);
+    const [suspendedMembers, setSuspendedMembers] = useState([]);
 
     useEffect(() => {
         const fetchMembers = async () => {
             try {
-                const response = await axios.get('/api/member/getMembersFromOrg', {
+                const res = await axios.get('/api/member/getMembersFromOrg', {
                     params: {
                         orgId: ambassador.organisation,
                     }
                 });
-                setMembers(response.data);
+                setMembers(res.data);
             } catch (error) {
-                console.error('Error fetching members:', error);
+                console.error('Error fetching members: ', error);
             }
         };
-        console.log("Trying");
+
+        const fetchSuspendedMembers = async() => {
+            try {
+                const res = await axios.get('/api/member/getSuspendedMembersFromOrg', {
+                    params: {
+                        orgId: ambassador.organisation,
+                    }
+                });
+                setSuspendedMembers(res.data)
+            } catch (error) {
+                console.error('Error fetching members: ', error);
+            }
+        };
+
         if (ambassador) {
             fetchMembers();
-        } else {
-            console.log("tried but no harrah");
+            fetchSuspendedMembers()
         }
 
     }, [ambassador]);
@@ -36,6 +49,16 @@ function AmbassadorDashboard() {
     const removeDeletedMember = (deletedMemberId) => {
         setMembers(members.filter(member => member._id !== deletedMemberId));
     };
+
+    const moveSuspendedMember = (suspendedMember) => {
+        setMembers(members.filter(member => member._id !== suspendedMember._id));
+        setSuspendedMembers(prevSuspendedMembers => [...prevSuspendedMembers, suspendedMember]);
+    }
+
+    const moveUnsuspendedMember = (unsuspendedMember) => {
+        setSuspendedMembers(suspendedMembers.filter(member => member._id !== unsuspendedMember._id));
+        setMembers(prevMembers => [...prevMembers, unsuspendedMember]);
+    }
 
     const handleRowClick = (member) => {
         setSelectedMember(member);
@@ -52,7 +75,6 @@ function AmbassadorDashboard() {
         return `${day}/${month}/${year}`;
     }
 
-
     return (
         <>
             <Navbar/>
@@ -60,32 +82,66 @@ function AmbassadorDashboard() {
                 <h1>Dashboard</h1>
             </div>
             <div className="container d-flex flex-column align-items-start">
-                <h3>Members</h3>
+                <div className="d-flex flex-row w-100 justify-content-between px-2">
+                    <h3>Members</h3>
+                    <button type="button" className="btn btn-primary m-2">Add Member</button>
+                </div>
                 <div className="table-responsive member-table">
                     <table className="table table-striped table-hover">
                         <thead className="thead-dark">
                         <tr>
+                            <th scope="col">Last name</th>
+                            <th scope="col">First name</th>
+                            <th scope="col">Member since</th>
                             <th scope="col">Member id</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Member Since</th>
                         </tr>
                         </thead>
                         <tbody>
                         {members.map(member => (
                             <tr key={member._id} onClick={() => handleRowClick(member)}>
-                                <th scope="row">{member._id}</th>
+                                <th scope="row">{member.last_name}</th>
                                 <td>{member.first_name}</td>
-                                <td>{member.last_name}</td>
                                 <td>{formatDate(member.member_since)}</td>
+                                <td>{member._id}</td>
                             </tr>
                         ))}
                         </tbody>
                     </table>
                 </div>
+
+                {suspendedMembers.length > 0 ? (
+                    <>
+                    <br />
+                    <h3>Suspended Members</h3>
+                    <div className="table-responsive member-table">
+                        <table className="table table-striped table-hover">
+                            <thead className="thead-dark">
+                            <tr>
+                                <th scope="col">Last name</th>
+                                <th scope="col">First name</th>
+                                <th scope="col">Member since</th>
+                                <th scope="col">Member id</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {suspendedMembers.map(member => (
+                                <tr key={member._id} onClick={() => handleRowClick(member)}>
+                                    <th scope="row">{member.last_name}</th>
+                                    <td>{member.first_name}</td>
+                                    <td>{formatDate(member.member_since)}</td>
+                                    <td>{member._id}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    </>
+                ): null}
             </div>
+
             {/* Member detail modal */}
-            {selectedMember && <MemberView member={selectedMember} onClose={closeModal} removeDeletedMember={removeDeletedMember}/>}
+            {selectedMember &&
+                <MemberView member={selectedMember} setMember={setSelectedMember} onClose={closeModal} removeDeletedMember={removeDeletedMember} moveSuspendedMember={moveSuspendedMember} moveUnsuspendedMember={moveUnsuspendedMember}/>}
         </>
 
     );

@@ -69,8 +69,21 @@ exports.suspendMember = async (req, res) => {
     const { memberId } = req.body;
 
     try {
+        console.log("Suspending member");
         const suspendedMember = await Member.suspendMember(memberId);
         res.status(200).send({ message: 'Member suspended successfully', suspendedMember });
+    } catch (error) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
+exports.unsuspendMember = async (req, res) => {
+    const { memberId } = req.body;
+
+    try {
+        console.log("Unsuspending member");
+        const unsuspendedMember = await Member.unsuspendMember(memberId);
+        res.status(200).send({ message: 'Member unsuspended successfully', unsuspendedMember });
     } catch (error) {
         res.status(500).send({ error: 'Internal server error' });
     }

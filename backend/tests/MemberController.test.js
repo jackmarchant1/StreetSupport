@@ -104,9 +104,9 @@ describe('MemberController', () => {
     });
 
     describe('getMembersFromOrg', () => {
-        it ('should return all members belonging to org when passed valid orgId', async () => {
+        it ('should return all unsuspended members belonging to org when passed valid orgId', async () => {
             const orgId = "orgId";
-            const mockMembers = [{ name: 'Alfie May' }, { name: 'Chuks Aneke' }];
+            const mockMembers = [{ name: 'Alfie May', is_suspended: false }, { name: 'Chuks Aneke', is_suspended: false }];
             Member.find.mockResolvedValue(mockMembers);
 
             const res = await request(app)
@@ -134,4 +134,38 @@ describe('MemberController', () => {
             expect(response.text).toBe('Server Error');
         });
     });
+
+    describe('getSuspendedMembersFromOrg', () => {
+        it ('should return all suspended members belonging to org when passed valid orgId', async () => {
+            const orgId = "orgId";
+            const mockMembers = [{ name: 'Alfie May', is_suspended: true }, { name: 'Chuks Aneke', is_suspended: true }];
+            Member.find.mockResolvedValue(mockMembers);
+
+            const res = await request(app)
+                .get('/api/member/getSuspendedMembersFromOrg')
+                .query({ orgId })
+                .expect(200);
+
+            // Assertions
+            expect(res.body).toEqual(mockMembers);
+
+        });
+
+        it('should return 500 if there is a server error', async () => {
+            const orgId = 'orgId';
+
+            Member.find.mockRejectedValue(new Error('Database error'));
+
+            // Make the request
+            const response = await request(app)
+                .get('/api/member/getSuspendedMembersFromOrg')
+                .query({ orgId })
+                .expect(500);
+
+            // Assertion
+            expect(response.text).toBe('Server Error');
+        });
+    });
+
+
 });

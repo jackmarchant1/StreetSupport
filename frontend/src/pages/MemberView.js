@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from "axios";
 
-function MemberView({ member, onClose, removeDeletedMember}) {
+function MemberView({ member, setMember, onClose, removeDeletedMember, moveSuspendedMember, moveUnsuspendedMember}) {
     function formatDate(dateString) {
         const date = new Date(dateString);
         const day = date.getDate();
@@ -9,20 +9,41 @@ function MemberView({ member, onClose, removeDeletedMember}) {
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     }
-    const deleteMember = (memberId) => async () => {
+    const deleteMember = (member) => async () => {
         try {
             await axios.post('/api/ambassador/deleteMember', {
-                    memberId: memberId
-                }
-            );
+                    memberId: member._id
+                });
             alert('Member deleted');
-            removeDeletedMember(memberId);
+            removeDeletedMember(member._id);
         } catch (error) {
-            alert('Could not delete member');
+            alert('Could not delete member, try again');
         }
     };
-    const suspendMember = (memberId) => () => {
-        alert('suspending member');
+    const suspendMember = (member) => async () => {
+        try {
+            const res = await axios.post('/api/ambassador/suspendMember', {
+                memberId: member._id
+            });
+            setMember(res.data.suspendedMember)
+            alert('Member suspended');
+            moveSuspendedMember(member);
+        } catch(error) {
+            alert('Member could not be suspended, try again');
+        }
+    };
+
+    const unsuspendMember = (member) => async () => {
+        try {
+            const res = await axios.post('/api/ambassador/unsuspendMember', {
+                memberId: member._id
+            });
+            setMember(res.data.unsuspendedMember);
+            alert('Member unsuspended');
+            moveUnsuspendedMember(member);
+        } catch(error) {
+            alert('Member could not be suspended, try again');
+        }
     };
 
     return (
@@ -44,8 +65,14 @@ function MemberView({ member, onClose, removeDeletedMember}) {
                             {/* Add more details as needed */}
                         </div>
                         <div className="modal-footer d-flex flex-row">
-                            <button type="button" className="btn btn-warning" onClick={suspendMember(member._id)}>Suspend member</button>
-                            <button type="button" className="btn btn-danger" onClick={deleteMember(member._id)}>Delete member</button>
+                            {member.is_suspended ? (
+                                <button type="button" className="btn btn-warning" onClick={unsuspendMember(member)}>Unsuspend member</button>
+                            ) : (
+                                <button type="button" className="btn btn-warning"
+                                        onClick={suspendMember(member)}>Suspend member</button>
+                            )}
+
+                            <button type="button" className="btn btn-danger" onClick={deleteMember(member)}>Delete member</button>
                         </div>
                     </div>
                 </div>
