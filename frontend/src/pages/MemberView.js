@@ -16,6 +16,7 @@ function MemberView({ member, setMember, onClose, removeDeletedMember, moveSuspe
                 });
             alert('Member deleted');
             removeDeletedMember(member._id);
+            onClose();
         } catch (error) {
             alert('Could not delete member, try again');
         }
@@ -25,9 +26,10 @@ function MemberView({ member, setMember, onClose, removeDeletedMember, moveSuspe
             const res = await axios.post('/api/ambassador/suspendMember', {
                 memberId: member._id
             });
-            setMember(res.data.suspendedMember)
+            member = res.data.suspendedMember
             alert('Member suspended');
             moveSuspendedMember(member);
+            onClose();
         } catch(error) {
             alert('Member could not be suspended, try again');
         }
@@ -38,9 +40,11 @@ function MemberView({ member, setMember, onClose, removeDeletedMember, moveSuspe
             const res = await axios.post('/api/ambassador/unsuspendMember', {
                 memberId: member._id
             });
+            member = res.data.unsuspendedMember;
             setMember(res.data.unsuspendedMember);
             alert('Member unsuspended');
             moveUnsuspendedMember(member);
+            onClose();
         } catch(error) {
             alert('Member could not be suspended, try again');
         }
@@ -61,6 +65,7 @@ function MemberView({ member, setMember, onClose, removeDeletedMember, moveSuspe
                             <p>ID: {member._id}</p>
                             <p>First Name: {member.first_name}</p>
                             <p>Last Name: {member.last_name}</p>
+                            <p>Bio: {member.bio}</p>
                             <p>Member Since: {formatDate(member.member_since)}</p>
                             {/* Add more details as needed */}
                         </div>

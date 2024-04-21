@@ -6,6 +6,8 @@ const memberRouter = require('./routes/member_routes');
 const connectDB = require('./config/DBConnection');
 const session = require('express-session');
 const request = require('supertest');
+const multer = require('multer');
+const path = require('path');
 
 const app = express()
 const port = 8080;
@@ -19,6 +21,7 @@ const corsOptions = {
     optionSuccessStatus: 200
 }
 
+
 app.use(cors(corsOptions));
 
 app.use(session({
@@ -31,6 +34,7 @@ app.use(session({
 app.use('/api', router);
 app.use('/api/ambassador', ambassadorRouter);
 app.use('/api/member', memberRouter);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 

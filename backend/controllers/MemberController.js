@@ -2,30 +2,42 @@ const Member = require('../models/Member');
 const Organisation = require('../models/Organisation');
 const { faker } = require('@faker-js/faker');
 const connectDB = require('../config/DBConnection');
-
+const multer = require('multer');
+const path = require('path');
+const upload = require('../config/multer.config')
 
 exports.createMember = async (req, res) => {
-    const { first_name, last_name, member_since, orgId } = req.body;
+    const { first_name, last_name, member_since, bio, orgId } = req.body;
+    const imageUrl = req.file? path.basename(req.file.path): '';
     try {
         // First check if the organisation exists
+        console.log(orgId)
         const organisation = await Organisation.findById(orgId);
         if (!organisation) {
-            return res.status(401).send({ message: 'Organisation not found' });
+            console.log('Org does not exist');
+            return res.status(404).send({ message: 'Organisation not found' });
         }
+
         const newMember = new Member({
             first_name,
             last_name,
-            member_since,
-            organisation: orgId
+            member_since: new Date(),
+            bio,
+            organisation: orgId,
+            image_url: imageUrl,
+            is_suspended: false
         });
+        console.log('creating this new member: ' + newMember);
+
         // Save the Member document to the database
         const savedMember = await newMember.save();
         // Send response with new member
         res.status(201).json(savedMember);
     } catch (error) {
-        res.status(500).send({ message: 'Error creating new member' });
+        res.status(500).send({ message: 'Error creating new member', error: error.message });
     }
 };
+
 
 exports.getMembersFromOrg = async (req, res) => {
     const { orgId } = req.query;
@@ -47,6 +59,22 @@ exports.getSuspendedMembersFromOrg = async (req, res) => {
     }
 };
 
+exports.getMember = async(req, res) => {
+    const { memberId } = req.query;
+    console.log('getting member with id ' + memberId);
+    try {
+        const member = await Member.findById(memberId);
+        if (!member) {
+            console.log('could not find member with member id ' + memberId);
+            res.status(404).send({message: 'Member does not exist'});
+            return;
+        }
+        res.status(200).send(member);
+    } catch (error) {
+        res.status(500).send('Server Error');
+    }
+}
+
 exports.generateRandomMembers = async (amount) => {
     try {
         await connectDB();
@@ -62,13 +90,18 @@ exports.generateRandomMembers = async (amount) => {
         for (let i = 0; i < amount; i++) {
             const firstName = faker.person.firstName();
             const lastName = faker.person.lastName();
-            const memberSince = faker.date.past(); // Random past date
+            const memberSince = faker.date.past();
+            const bio = faker.person.bio();
+            const image_url = '/Users/jackmarchant/WebStormProjects/StreetSupport/backend/uploads/image-1713695136440-688627871.png'
 
             const member = new Member({
                 first_name: firstName,
                 last_name: lastName,
                 member_since: memberSince,
-                organisation: organisation._id
+                organisation: organisation._id,
+                bio,
+                image_url,
+                is_suspended: false
             });
 
             members.push(member);

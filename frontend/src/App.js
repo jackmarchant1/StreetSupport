@@ -5,6 +5,7 @@ import AmbassadorDashboard from "./pages/AmbassadorDashboard";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from './AuthContext';
+import NewMemberPage from "./pages/NewMemberPage";
 
 function App() {
 
@@ -22,7 +23,15 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
-                    <Route path="/donation" element={<DonationPage/>} />
+                    <Route
+                        path="/ambassador/dashboard/createNewMember"
+                        element={
+                            <ProtectedRoute>
+                                <NewMemberPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route path="/donation/:memberId" element={<DonationPage/>} />
                     <Route path="*" element={<DonationPage/>} />
                 </Routes>
             </Router>

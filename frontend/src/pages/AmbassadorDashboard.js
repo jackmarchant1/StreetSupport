@@ -4,12 +4,14 @@ import {useAuth} from '../AuthContext';
 import Navbar from "../partials/Navbar";
 import '../styles/Dashboard.css'
 import MemberView from "./MemberView";
+import NewMemberPage from "./NewMemberPage";
 
 
 function AmbassadorDashboard() {
     const {ambassador} = useAuth();
     const [members, setMembers] = useState([]);
     const [selectedMember, setSelectedMember] = useState(false);
+    const [creatingNewMember, setCreatingNewMember] = useState(false)
     const [suspendedMembers, setSuspendedMembers] = useState([]);
 
     useEffect(() => {
@@ -48,6 +50,7 @@ function AmbassadorDashboard() {
 
     const removeDeletedMember = (deletedMemberId) => {
         setMembers(members.filter(member => member._id !== deletedMemberId));
+        setSuspendedMembers(suspendedMembers.filter(member => member._id !== deletedMemberId));
     };
 
     const moveSuspendedMember = (suspendedMember) => {
@@ -63,6 +66,9 @@ function AmbassadorDashboard() {
     const handleRowClick = (member) => {
         setSelectedMember(member);
     };
+    const changeModalMode = () => {
+        setCreatingNewMember(prev => !prev);
+    }
     const closeModal = () => {
         setSelectedMember(null);
     };
@@ -84,7 +90,7 @@ function AmbassadorDashboard() {
             <div className="container d-flex flex-column align-items-start">
                 <div className="d-flex flex-row w-100 justify-content-between px-2">
                     <h3>Members</h3>
-                    <button type="button" className="btn btn-primary m-2">Add Member</button>
+                    <button type="button" className="btn btn-primary m-2" onClick={() => changeModalMode()}>Add Member</button>
                 </div>
                 <div className="table-responsive member-table">
                     <table className="table table-striped table-hover">
@@ -142,6 +148,10 @@ function AmbassadorDashboard() {
             {/* Member detail modal */}
             {selectedMember &&
                 <MemberView member={selectedMember} setMember={setSelectedMember} onClose={closeModal} removeDeletedMember={removeDeletedMember} moveSuspendedMember={moveSuspendedMember} moveUnsuspendedMember={moveUnsuspendedMember}/>}
+
+            {creatingNewMember &&
+                <NewMemberPage onClose={changeModalMode}/>
+            }
         </>
 
     );
