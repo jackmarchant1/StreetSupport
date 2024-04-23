@@ -66,9 +66,13 @@ exports.getMember = async(req, res) => {
         const member = await Member.findById(memberId);
         if (!member) {
             console.log('could not find member with member id ' + memberId);
-            res.status(404).send({message: 'Member does not exist'});
-            return;
+            return res.status(404).send({message: 'Member does not exist'});
         }
+        const organisation = await Organisation.findById(member.organisation);
+        if (!organisation) {
+            return res.status(404).send({message: "Organisation does not exist"})
+        }
+        member.organisation = organisation;
         res.status(200).send(member);
     } catch (error) {
         res.status(500).send('Server Error');

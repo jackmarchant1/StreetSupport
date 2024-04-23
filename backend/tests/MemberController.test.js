@@ -172,12 +172,24 @@ describe('MemberController', () => {
                 organisation: 'fake-org-id'
             };
             Member.findById.mockResolvedValue(mockReturnedMember);
+            const mockOrg = {
+                _id: {
+                    $oid: "fake-org-id"
+                },
+                member_since: {
+                    $date: "2024-01-01T00:00:00.000Z"
+                },
+                name: "test",
+                website: "test.come"
+            }
+            Organisation.findById.mockResolvedValue(mockOrg);
             const res = await request(app)
                 .get('/api/member/get')
                 .query({memberId})
                 .expect(200)
             expect(Member.findById).toHaveBeenCalledWith(memberId);
             expect(res.body._id).toEqual(mockReturnedMember._id); //Cannot compare whole thing because of date object
+            expect(res.body.organisation).toEqual(mockOrg);
         });
 
         it('should return 404 error if member does not exist', async () => {
