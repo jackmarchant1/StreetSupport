@@ -6,10 +6,9 @@
 }
 
 .exclaim {
-    background-color: #D9D9D9;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    color: white;
+    height: 2rem;
+    padding: 15px;
 }
 
 @keyframes slideInFromLeft {
@@ -51,8 +50,9 @@
 }
 
 .profile-image {
-    width: 70%;
-    height: auto; /* Keeps the aspect ratio intact */
+    width: 175px;
+    max-height: 175px;
+    border-radius: 50%;
 }
 
 .payment-buttons {

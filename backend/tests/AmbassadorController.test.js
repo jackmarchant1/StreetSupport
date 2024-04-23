@@ -196,7 +196,7 @@ describe('AmbassadorController', () => {
             expect(Ambassador.findOne).toHaveBeenCalledWith({email: 'test@example.com'});
             expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'encryptedPassword');
             expect(Organisation.findById).toHaveBeenCalledWith('orgId');
-            expect(res.body).toEqual({isAuthenticated: true, ambassador: expectedAmbassador, message: "Log in success"});
+            expect(res.body).toEqual({isAuthenticated: true, ambassador: expectedAmbassador, organisation: ambassadorOrg, message: "Log in success"});
         });
 
         it('should throw error when password does not match', async () => {

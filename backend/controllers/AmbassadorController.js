@@ -50,7 +50,7 @@ exports.loginAmbassador = async (req, res) => {
         delete returnAmbassador.password;
         returnAmbassador.organisation = organisation;
         req.session.userId = returnAmbassador._id;
-        return res.status(200).send({isAuthenticated: true, ambassador: returnAmbassador, message: "Log in success"})
+        return res.status(200).send({isAuthenticated: true, ambassador: returnAmbassador, organisation: organisation, message: "Log in success"})
     } catch (error) {
         res.status(500).send({ isAuthenticated: false, message: 'Server error during login.' });
     }

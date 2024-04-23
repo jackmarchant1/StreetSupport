@@ -62,12 +62,12 @@ function MemberView({ member, setMember, onClose, removeDeletedMember, moveSuspe
                             </button>
                         </div>
                         <div className="modal-body">
+                            <img src={`http://localhost:8080/uploads/${member.image_url}`} alt="Member's image" className="profile-image"/> {/* TODO: update root */}
                             <p>ID: {member._id}</p>
                             <p>First Name: {member.first_name}</p>
                             <p>Last Name: {member.last_name}</p>
                             <p>Bio: {member.bio}</p>
                             <p>Member Since: {formatDate(member.member_since)}</p>
-                            {/* Add more details as needed */}
                         </div>
                         <div className="modal-footer d-flex flex-row">
                             {member.is_suspended ? (

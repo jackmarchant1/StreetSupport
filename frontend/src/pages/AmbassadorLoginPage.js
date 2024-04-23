@@ -7,14 +7,13 @@ import {Navigate, useNavigate} from 'react-router-dom';
 function AmbassadorLoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const {isAuthenticated, login, logout} = useAuth();
+    const {isAuthenticated, login} = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (event) => {
         event.preventDefault();
         //TODO: make it so can choose organisation, not just set ID
-        const organisationId = "65eca2fe501f7ae0f48737dc";
-        const credentials = {email, password, organisationId};
+        const credentials = {email, password};
 
         try {
             const response = await axios.post('/api/ambassador/login', credentials, {withCredentials: true});

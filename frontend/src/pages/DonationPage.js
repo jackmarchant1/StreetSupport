@@ -29,6 +29,11 @@ function DonationPage() {
         alert(`Alert pressed.`);
     };
 
+    const getYearFromDate = (dateString) => {
+        const date = new Date(member.member_since);
+        return date.getFullYear();
+    }
+
     useEffect(() => {
         fetchMember();
     }, [memberId])
@@ -38,27 +43,21 @@ function DonationPage() {
     }
     return (
             <div className="back-layer d-flex justify-content-end">
-                    <div className="exclaim d-flex justify-content-center align-items-center m-2" onClick={alertButtonClicked}>
-                        !
-                    </div>
-                    <div className="donation d-flex flex-column justify-content-between">
+                <div className="exclaim d-flex justify-content-center align-items-center m-2" onClick={alertButtonClicked}>
+                    <h5><i className="bi bi-patch-question-fill"></i></h5>
+                </div>
+                <div className="donation d-flex flex-column justify-content-between">
                         <div className="profile d-flex flex-column">
                             <div className="profile-image-container">
                                 <img src={`http://localhost:8080/uploads/${member.image_url}`} alt="Member's Profile" className="profile-image"/>
                             </div>
                             <div className="member-info d-flex flex-column">
                                 <h2>{member.first_name} {member.last_name}</h2>
-                                <p className="purple-text">Member since 2023</p>
-                                <p>This will be a little profile about the member. Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit. Vivamus vulputate tellus nec arcu scelerisque pharetra. Proin sodales
-                                    accumsan
-                                    sollicitudin. Suspendisse porttitor hendrerit varius. Nam diam ipsum, mollis vitae diam vel,
-                                    rhoncus semper ligula. Fusce non est erat. Nam eu massa erat. Praesent sed venenatis risus,
-                                    et
-                                    aliquet metus. Nulla eu mi non lectus sodales ullamcorper sed a ligula.</p>
+                                <p className="purple-text">Member since {getYearFromDate(member.member_since)}</p>
+                                <p>{member.bio}</p>
                             </div>
                             <div className="charity-info">
-                                This member is associated with XYZ charity, you can contact their representative here.
+                                This member is associated with {member.organisation.name} organisation, you can contact their representative at {member.organisation.website}.
                             </div>
                         </div>
 

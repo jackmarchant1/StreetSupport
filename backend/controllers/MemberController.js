@@ -95,8 +95,13 @@ exports.generateRandomMembers = async (amount) => {
             const firstName = faker.person.firstName();
             const lastName = faker.person.lastName();
             const memberSince = faker.date.past();
-            const bio = faker.person.bio();
-            const image_url = '/Users/jackmarchant/WebStormProjects/StreetSupport/backend/uploads/image-1713695136440-688627871.png'
+            const bio = "This will be a little profile about the member. " +
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vulputate tellus nec " +
+                "arcu scelerisque pharetra. Proin sodales accumsan sollicitudin. Suspendisse porttitor hendrerit" +
+                " varius. Nam diam ipsum, mollis vitae diam vel, rhoncus semper ligula. Fusce non est erat. Nam eu " +
+                "massa erat. Praesent sed venenatis risus, et aliquet metus. Nulla eu mi non lectus sodales ullamcorper " +
+                "sed a ligula.";
+            const image_url = 'homeless_'+(Math.floor(Math.random() * 4) + 1) + ".jpg";
 
             const member = new Member({
                 first_name: firstName,
