@@ -61,8 +61,8 @@ exports.getSuspendedMembersFromOrg = async (req, res) => {
 
 exports.getMember = async(req, res) => {
     const { memberId } = req.query;
-    console.log('getting member with id ' + memberId);
     try {
+        console.log("retrieving member")
         const member = await Member.findById(memberId);
         if (!member) {
             console.log('could not find member with member id ' + memberId);
@@ -70,6 +70,7 @@ exports.getMember = async(req, res) => {
         }
         const organisation = await Organisation.findById(member.organisation);
         if (!organisation) {
+            console.log("Organisation does not exist: " + member.organisation)
             return res.status(404).send({message: "Organisation does not exist"})
         }
         member.organisation = organisation;
@@ -87,7 +88,7 @@ exports.generateRandomMembers = async (amount) => {
         const organisation = await Organisation.findById('65eca2fe501f7ae0f48737dc');
 
         if (!organisation) {
-            console.error('No organisation found in the database');
+            console.log('No organisation found in the database');
             return;
         }
 
@@ -120,6 +121,7 @@ exports.generateRandomMembers = async (amount) => {
         await Member.insertMany(members);
         console.log(amount + ' random members inserted successfully');
     } catch (error) {
-        console.error('Error generating random members:', error);
+        console.log('Error generating random members:', error);
+        throw(error);
     }
 };

@@ -17,7 +17,7 @@ function DonationPage() {
             });
             setMember(res.data);
         } catch(error) {
-            console.log(console.log("Could not load the member"));
+            console.log("Could not load the member, " + error);
             //TODO: add proper error handling if there is no member of that id (probably a 404 page)
         }
 

@@ -103,14 +103,17 @@ function AmbassadorDashboard() {
                         </tr>
                         </thead>
                         <tbody>
-                        {members.map(member => (
-                            <tr key={member._id} onClick={() => handleRowClick(member)}>
-                                <th scope="row">{member.last_name}</th>
-                                <td>{member.first_name}</td>
-                                <td>{formatDate(member.member_since)}</td>
-                                <td>{member._id}</td>
-                            </tr>
-                        ))}
+                        {members.length > 0 ? (
+                            members.map(member => (
+                                <tr key={member._id} onClick={() => handleRowClick(member)}>
+                                    <th scope="row">{member.last_name}</th>
+                                    <td>{member.first_name}</td>
+                                    <td>{formatDate(member.member_since)}</td>
+                                    <td>{member._id}</td>
+                                </tr>
+                            ))
+                        ) : (<p>Loading</p>)
+                        }
                         </tbody>
                     </table>
                 </div>

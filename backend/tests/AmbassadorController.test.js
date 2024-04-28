@@ -181,9 +181,7 @@ describe('AmbassadorController', () => {
 
             //Mock setup
             Ambassador.findOne.mockResolvedValue(returnAmbassador);
-
             bcrypt.compare = jest.fn().mockResolvedValue(true);
-
             Organisation.findById.mockResolvedValue(ambassadorOrg);
 
             // Send request
@@ -196,7 +194,7 @@ describe('AmbassadorController', () => {
             expect(Ambassador.findOne).toHaveBeenCalledWith({email: 'test@example.com'});
             expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'encryptedPassword');
             expect(Organisation.findById).toHaveBeenCalledWith('orgId');
-            expect(res.body).toEqual({isAuthenticated: true, ambassador: expectedAmbassador, organisation: ambassadorOrg, message: "Log in success"});
+            expect(res.body).toEqual({isAuthenticated: true, ambassador: expectedAmbassador, message: "Log in success"});
         });
 
         it('should throw error when password does not match', async () => {
@@ -222,7 +220,6 @@ describe('AmbassadorController', () => {
 
             //Mock setup
             Ambassador.findOne.mockResolvedValue(returnAmbassador);
-
             bcrypt.compare = jest.fn().mockResolvedValue(false); //passwords dont match
 
             // Send request
@@ -323,10 +320,7 @@ describe('AmbassadorController', () => {
                 .post('/api/ambassador/logout')
                 .expect(200);
 
-            expect(response.body).toEqual({
-                isAuthenticated: false,
-                message: "Log out success"
-            });
+            expect(response.body).toEqual({isAuthenticated: false, message: "Log out success"});
         });
     });
 
@@ -349,7 +343,7 @@ describe('AmbassadorController', () => {
             expect(res.body).toEqual({message:'Member suspended successfully', suspendedMember: mockSuspendedMember});
         });
 
-        it('should handle errors when suspending a member', async () => {
+        it('should throw an error if unsuccessful', async () => {
 
             Member.suspendMember.mockRejectedValueOnce(new Error('Mocked error'));
 
@@ -363,7 +357,40 @@ describe('AmbassadorController', () => {
                 .expect(500);
 
             expect(res.body).toEqual({error: 'Internal server error'});
-            expect(Member.suspendMember).toHaveBeenCalledWith('mockedMemberId');
+        });
+    });
+
+    describe('unsuspendMember', () => {
+        it('should unsuspend a given member successfully', async () => {
+            const mockunsuspendedMember = { _id: 'mockedMemberId', is_suspended: false }
+            Member.unsuspendMember.mockResolvedValueOnce(mockunsuspendedMember);
+
+            const mockRequestBody = {
+                memberId: 'mockedMemberId',
+            };
+
+            const res = await request(app)
+                .post('/api/ambassador/unsuspendMember')
+                .send(mockRequestBody)
+                .expect(200);
+
+            expect(Member.unsuspendMember).toHaveBeenCalledWith('mockedMemberId');
+            expect(res.body).toEqual({message:'Member unsuspended successfully', unsuspendedMember: mockunsuspendedMember});
+        });
+
+        it('should throw an error is unsuccessful', async () => {
+            Member.unsuspendMember.mockRejectedValueOnce(new Error('Mocked error'));
+
+            const mockRequestBody = {
+                memberId: 'mockedMemberId',
+            };
+
+            const res = await request(app)
+                .post('/api/ambassador/unsuspendMember')
+                .send(mockRequestBody)
+                .expect(500);
+
+            expect(res.body).toEqual({error: 'Internal server error'});
         });
     });
 

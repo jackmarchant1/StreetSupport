@@ -37,7 +37,7 @@ exports.loginAmbassador = async (req, res) => {
         if (!ambassador) {
             return res.status(401).send({isAuthenticated: false, message: "Ambassador with that email does not exist"});
         }
-        const isMatch = await bcrypt.compare(password, ambassador.password);
+        const isMatch = await bcrypt.compare(password, ambassador.password); //Compare passwords
         if (!isMatch) {
             return res.status(401).send({isAuthenticated: false, message: "Password is incorrect"})
         }
@@ -47,10 +47,10 @@ exports.loginAmbassador = async (req, res) => {
             return res.status(401).send({isAuthenticated: false, message: "Organisation does not exist"})
         }
         const returnAmbassador = { ...ambassador._doc };
-        delete returnAmbassador.password;
-        returnAmbassador.organisation = organisation;
-        req.session.userId = returnAmbassador._id;
-        return res.status(200).send({isAuthenticated: true, ambassador: returnAmbassador, organisation: organisation, message: "Log in success"})
+        delete returnAmbassador.password; //Remove sensitive information
+        returnAmbassador.organisation = organisation; //Add full organisation
+        req.session.userId = returnAmbassador._id; //Set session user id
+        return res.status(200).send({isAuthenticated: true, ambassador: returnAmbassador,  message: "Log in success"})
     } catch (error) {
         res.status(500).send({ isAuthenticated: false, message: 'Server error during login.' });
     }

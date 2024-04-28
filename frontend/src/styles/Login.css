@@ -18,3 +18,23 @@
 .purple-text {
     color: #6C3EA1;
 }
+
+.heading {
+    position: absolute;
+    top: calc(100% - 75% - 2.5rem);
+    /*left: 50%;*/
+    /*transform: translateX(-50%);*/
+    color: #D9D9D9;
+}
+
+.btn-primary {
+    background-color: #6c3fa1;
+    border-width: 0px;
+}
+.bottom-area {
+    width: 100%;
+}
+
+form {
+    width: 50%;
+}

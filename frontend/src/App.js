@@ -32,6 +32,7 @@ function App() {
                         }
                     />
                     <Route path="/donation/:memberId" element={<DonationPage/>} />
+                    {/*<Route path="/404" element={} /> TODO:ADD 404 PAGE*/ }
                     <Route path="*" element={<DonationPage/>} />
                 </Routes>
             </Router>

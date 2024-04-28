@@ -2,11 +2,14 @@ const request = require('supertest');
 const app = require('../index');
 const Organisation = require('../models/Organisation');
 const Member = require('../models/Member');
+const connectDB = require('../config/DBConnection');
+const {generateRandomMembers} = require('../controllers/MemberController');
 
-//Mock both models that are used, so whenever calls are made to these we are actually calling the mocks
+//Mock all models that are used, so whenever calls are made to these we are actually calling the mocks
 jest.mock('../models/Ambassador');
 jest.mock('../models/Organisation');
 jest.mock('../models/Member');
+jest.mock('../config/DBConnection');
 
 describe('MemberController', () => {
     afterEach(() => {
@@ -204,6 +207,30 @@ describe('MemberController', () => {
             expect(Member.findById).toHaveBeenCalledWith(memberId);
         });
 
+        it('should return 404 error if organisation does not exist', async () => {
+            const memberId = 'memberId';
+            const mockReturnedMember = {
+                _id: 'fake-member-id',
+                first_name: 'test fn',
+                last_name: 'test ln',
+                bio: 'test bio',
+                is_suspended: false,
+                member_since: new Date(),
+                image_url: 'img_url',
+                organisation: 'fake-org-id'
+            };
+            Member.findById.mockResolvedValue(mockReturnedMember);
+            Organisation.findById.mockResolvedValue(null);
+
+            const res = await request(app)
+                .get('/api/member/get')
+                .query({memberId})
+                .expect(404)
+
+            expect(Member.findById).toHaveBeenCalledWith(memberId);
+            expect(Organisation.findById).toHaveBeenCalledWith('fake-org-id');
+        });
+
         it('should return 500 error if server error', async() => {
             const memberId = 'memberId';
             Member.findById.mockRejectedValue(new Error('Server error'));
@@ -215,7 +242,52 @@ describe('MemberController', () => {
 
             expect(Member.findById).toHaveBeenCalledWith(memberId);
         })
-    })
+    });
 
+    describe('generateRandomMembers', () => {
+
+        it('should generate and save the specified number of members when an organisation exists', async () => {
+            const amount = 5;
+            const mockOrganisation = { _id: '65eca2fe501f7ae0f48737dc' };
+            Organisation.findById.mockResolvedValue(mockOrganisation);
+            Member.insertMany = jest.fn().mockImplementation((members) => Promise.resolve(members));
+            connectDB.mockResolvedValue();
+
+
+            await generateRandomMembers(amount);
+
+            expect(Organisation.findById).toHaveBeenCalledWith('65eca2fe501f7ae0f48737dc');
+            expect(Member.insertMany).toHaveBeenCalledTimes(1);
+            expect(Member.insertMany.mock.calls[0][0].length).toBe(amount);
+        });
+
+        it('should not proceed with member generation if no organisation is found', async () => {
+            Organisation.findById.mockResolvedValue(null);
+            const amount = 5;
+
+            await generateRandomMembers(amount);
+
+            expect(Organisation.findById).toHaveBeenCalledWith('65eca2fe501f7ae0f48737dc');
+            expect(Member.insertMany).not.toHaveBeenCalled();
+        });
+
+        it('should handle errors gracefully', async () => {
+            const amount = 5;
+            const error = new Error('Database connection failed');
+            connectDB.mockImplementation(() => { throw error; }); // Simulate a throw on db connection attempt
+
+            try {
+                await generateRandomMembers(amount);
+                fail('The function should have thrown an error.');
+            } catch (caughtError) {
+                expect(caughtError).toBe(error);
+            }
+
+            expect(connectDB).toHaveBeenCalled();
+            expect(Organisation.findById).not.toHaveBeenCalled();
+            expect(Member.insertMany).not.toHaveBeenCalled();
+        });
+
+    });
 
 });
