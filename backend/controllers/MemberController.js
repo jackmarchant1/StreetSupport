@@ -4,7 +4,9 @@ const { faker } = require('@faker-js/faker');
 const connectDB = require('../config/DBConnection');
 const multer = require('multer');
 const path = require('path');
-const upload = require('../config/multer.config')
+const upload = require('../config/multer.config');
+const stripe = require('stripe')('sk_test_51PBb2OCxJlYqOmKBYKn1cSYwvv0wKytWuWNHdprMXPVy0CVUvXxjacrTpOJdbxAEP8QN1R3FFaUtGTDHWo9qfuyO00NoieUCE2');
+
 
 exports.createMember = async (req, res) => {
     const { first_name, last_name, member_since, bio, orgId } = req.body;
@@ -125,3 +127,28 @@ exports.generateRandomMembers = async (amount) => {
         throw(error);
     }
 };
+
+exports.acceptPayment = async(req, res) => {
+    console.log('accepting payment on backend');
+    const { memberId } = req.body;
+    try {
+        const session = await stripe.checkout.sessions.create({
+            line_items: [
+                {
+                    price: 'price_1PBc3OCxJlYqOmKBB5WB9ghJ',
+                    quantity: 1,
+                },
+            ],
+            mode: 'payment',
+            success_url: 'http://localhost:3000/donation/'+memberId,
+            cancel_url: 'http://localhost:3000/donation/'+memberId,
+        });
+        console.log(session.url);
+        res.status(200).json({ url: session.url });
+    } catch(e) {
+        console.log('error in creating session' + e);
+        res.status(500);
+    }
+
+}
+

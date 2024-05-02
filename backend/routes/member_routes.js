@@ -12,4 +12,6 @@ router.get('/getMembersFromOrg', memberController.getMembersFromOrg);
 
 router.get('/getSuspendedMembersFromOrg', memberController.getSuspendedMembersFromOrg);
 
+router.post('/acceptPayment', memberController.acceptPayment);
+
 module.exports = router

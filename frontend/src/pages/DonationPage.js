@@ -2,10 +2,12 @@ import React, {useState, useEffect} from 'react';
 import '../styles/Donation.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function DonationPage() {
     let { memberId } = useParams();
     const [member, setMember] = useState(null);
+    const navigate = useNavigate();
 
     const fetchMember = async () => {
         try {
@@ -18,15 +20,21 @@ function DonationPage() {
             setMember(res.data);
         } catch(error) {
             console.log("Could not load the member, " + error);
-            //TODO: add proper error handling if there is no member of that id (probably a 404 page)
+            navigate('/404');
         }
-
     }
-    const handlePaymentButtonClick = (paymentType) => () => {
-        alert(`This will process a ${paymentType} payment.`);
+    const handlePaymentButtonClick = () => async() => {
+        try {
+            console.log('requesting payment link');
+            const res = await axios.post('/api/member/acceptPayment', {memberId}, {withCredentials: true});
+            console.log(res.data);
+            window.location.href = res.data.url;
+        } catch(error) {
+            console.log('Could not handle payment');
+        }
     };
     const alertButtonClicked = () => {
-        alert(`Alert pressed.`);
+        alert(`Find out more about Street Support by emailing jmarchant1@sheffield.ac.uk.`);
     };
 
     const getYearFromDate = (dateString) => {
