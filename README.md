@@ -3,15 +3,12 @@
 ### Table of Contents
 1. [Introduction](#introduction)
 2. [Features](#features)
-3. [Usage](#usage)
-4. [Security & Privacy](#security--privacy)
-5. [Ethical Considerations](#ethical-considerations)
-6. [Project Status](#project-status)
-7. [Future Enhancements](#future-enhancements)
-8. [Contributing](#contributing)
-9. [Feedback & Adoption Rates](#feedback--adoption-rates)
-10. [Acknowledgments](#acknowledgments)
-11. [License](#license)
+3. [Security & Privacy](#security--privacy)
+4. [Ethical Considerations](#ethical-considerations)
+5. [Project Status](#project-status)
+6. [Future Enhancements](#future-enhancements)
+7. [Contributing](#contributing)
+8. [Feedback & Adoption Rates](#feedback--adoption-rates)
 
 ## Introduction
 With the accelerating move towards digital transactions, the homeless community faces challenges in receiving direct monetary aid as cash donations decline. This project introduces a novel platform aimed at addressing this gap, providing a secure and accessible means for the homeless to receive monetary support in today's cashless environment.
@@ -24,10 +21,6 @@ With the accelerating move towards digital transactions, the homeless community 
 
 - **Integration with Partnering Charity:** Collaborative effort with a charitable organization that helps distribute unique codes and corresponding debit cards to homeless beneficiaries. These cards offer an avenue for beneficiaries to utilize received funds.
 
-## Usage
-
-(To be updated as the project progresses.)
-
 ## Security & Privacy
 
 My utmost priority with the project is to ensure the safety, security, and privacy of both donors and recipients. Comprehensive details on the measures in place will be shared here as the platform develops.
@@ -38,13 +31,14 @@ This project does not merely revolve around software development. I am deeply co
 
 ## Project Status
 
-- **Development Phase:** Pre-implementation
+- **Development Phase:** Prototype complete, feedback gathered from potential donors and local homeless charity ambassadors.
 
-Stay tuned for regular updates as the project progresses!
 
 ## Future Enhancements
 
-The project is currently in the initial stages and I eagerly look forward to evolving it based on user feedback and technological advances. Planned enhancements and new features will be listed here.
+Feedback from the homeless charity ambassadors and potential donor users through feedback forms and interviews indicated some key areas to explore should the project progress. These include:
+- Implement account creation ability for donors, allowing them to check past donations and keep track of how members they have donated to are doing,
+- Allow charity ambassadors to post messages to member's pages,
 
 ## Contributing
 
@@ -52,15 +46,7 @@ I am yet to decide about contributions to this project and it will rely largely 
 
 ## Feedback & Adoption Rates
 
-I will closely monitor the platform's effectiveness and gather feedback from both homeless individuals and donors. Insights and statistics will be updated here.
-
-## Acknowledgments
-
-Acknowledgments will be listed here
-
-## License
-
-To be updated with appropriate licensing information.
+I will closely monitor the platform's effectiveness and gather feedback from both homeless individuals, charity ambassadors, and donors. Insights and statistics will be updated here.
 
 ---
 
