@@ -31,7 +31,7 @@ This project does not merely revolve around software development. I am deeply co
 
 ## Project Status
 
-- **Development Phase:** Prototype complete, feedback gathered from potential donors and local homeless charity ambassadors.
+- **Complete:** Prototype fully developed. Feedback gathered from potential donors and local homeless charity ambassadors. Project achieved a first class mark.
 
 
 ## Future Enhancements
@@ -43,10 +43,6 @@ Feedback from the homeless charity ambassadors and potential donor users through
 ## Contributing
 
 I am yet to decide about contributions to this project and it will rely largely on what is allowed by university guidelines. If you'd like to contribute, please check back soon for guidelines on how you can make a difference.
-
-## Feedback & Adoption Rates
-
-I will closely monitor the platform's effectiveness and gather feedback from both homeless individuals, charity ambassadors, and donors. Insights and statistics will be updated here.
 
 ---
 
