@@ -8,7 +8,6 @@
 5. [Project Status](#project-status)
 6. [Future Enhancements](#future-enhancements)
 7. [Contributing](#contributing)
-8. [Feedback & Adoption Rates](#feedback--adoption-rates)
 
 ## Introduction
 With the accelerating move towards digital transactions, the homeless community faces challenges in receiving direct monetary aid as cash donations decline. This project introduces a novel platform aimed at addressing this gap, providing a secure and accessible means for the homeless to receive monetary support in today's cashless environment.
